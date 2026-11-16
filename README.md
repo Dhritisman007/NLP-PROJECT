@@ -474,7 +474,7 @@ The highlighted evidence is imperfect: for "The tiger's roar is not like the ful
 - No human-annotated meaning-loss data for English→Hindi (no MQM, no HalOmi); Hindi detector quality is measured on synthetic errors plus a small human-eval sample.
 - `XCOMET-lite` does not exist officially; span-level QE needs XCOMET-XL (GPU).
 - NLLB-600M and COMET models are licensed CC-BY-NC: research use only.
-- Synthetic-data limitations are listed in §6. _More TBD as phases land._
+- Synthetic-data limitations are listed in §6.
 
 ## 14. Future work
 - Dependency-parse-based subject/object swap; mid-sentence hallucinations; number-word errors.
