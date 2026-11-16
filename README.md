@@ -1,6 +1,6 @@
 # Detection and Correction of Meaning Loss in Machine Translation
 
-> Status: **All 8 phases built and tested.** Not done: the LLM-based baselines (c)/(d) (no API key), COMET (gated models), and the human annotation itself (the kit is ready, nobody has annotated yet). (setup + MT smoke test; synthetic error generator; detection signals; detection classifier with held-out test evaluation). CometKiwi/xCOMET signals are written but have never run on a real model (§7), so all Phase 4 numbers are **without QE features**. The span-guided vs no-spans LLM comparison of Phase 5 has **not been run yet** (needs `ANTHROPIC_API_KEY`, see §9). Sections marked _TBD_ are filled in as phases land.
+> Status: **All 8 phases are built and tested** (setup and MT smoke test; synthetic error generator; detection signals; detection classifier with held-out test evaluation; correction; end-to-end evaluation; human-evaluation kit; demo). **Not done:** the LLM-based baselines (c)/(d) and the span-guided vs no-spans LLM comparison (no `ANTHROPIC_API_KEY`, see §9), COMET/CometKiwi/xCOMET (gated models; the signals are written but have never run on a real model, §7, so the detector numbers are **without QE features**), and the human annotation itself (the kit is ready, nobody has annotated yet).
 
 ## 1. Problem statement
 
@@ -46,7 +46,7 @@ flowchart LR
     SY[synth/inject_errors.py<br/>labelled synthetic errors] -.trains.-> C
 ```
 
-_(Implemented so far: `translate.py`, config/cache/utils, data download, `synth/*`, `detect/{base,similarity,roundtrip,alignment,rules,qe,run}`. `features.py`, `classifier.py` and everything after are TBD.)_
+_(All modules shown above are implemented: `translate.py`, config/cache/utils, data download, `synth/*`, `detect/*` (signals, `features.py`, `classifier.py`), `correct/*`, `pipeline.py`, `evaluate.py`, `human_eval/*` and `demo.py`.)_
 
 ## 3. Setup
 
