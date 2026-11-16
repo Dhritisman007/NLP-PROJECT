@@ -1,6 +1,11 @@
 # Detection and Correction of Meaning Loss in Machine Translation
 
-> Status: **All 8 phases are built and tested** (setup and MT smoke test; synthetic error generator; detection signals; detection classifier with held-out test evaluation; correction; end-to-end evaluation; human-evaluation kit; demo). **Not done:** the LLM-based baselines (c)/(d) and the span-guided vs no-spans LLM comparison (no `ANTHROPIC_API_KEY`, see §9), COMET/CometKiwi/xCOMET (gated models; the signals are written but have never run on a real model, §7, so the detector numbers are **without QE features**), and the human annotation itself (the kit is ready, nobody has annotated yet).
+> **Status: all 8 phases are built and tested** (setup and MT smoke test; synthetic error generator; detection signals; detection classifier with held-out test evaluation; correction; end-to-end evaluation; human-evaluation kit; demo).
+>
+> **Not done:**
+> - LLM baselines (c)/(d) and the span-guided vs no-spans LLM comparison: no `ANTHROPIC_API_KEY` (see §9).
+> - COMET / CometKiwi / xCOMET: gated models. The signals are written but have never run on a real model (§7), so the detector numbers are **without QE features**.
+> - Human annotation: the kit is ready, but nobody has annotated yet.
 
 ## 1. Problem statement
 
