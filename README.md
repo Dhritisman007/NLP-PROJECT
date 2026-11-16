@@ -480,7 +480,6 @@ The highlighted evidence is imperfect: for "The tiger's roar is not like the ful
 - Dependency-parse-based subject/object swap; mid-sentence hallucinations; number-word errors.
 - Run the LLM baselines (c)/(d) and COMET evaluation (needs `ANTHROPIC_API_KEY` / `HF_TOKEN` + Colab).
 - A candidate ranker trained on real MT n-best lists (re-ranking by the current detector does not help, §9).
-- _More TBD._
 
 ## 15. License
 
