@@ -1,0 +1,4 @@
+# Extra packages for the Colab T4 profile (heavy models). Install AFTER requirements.txt:
+#   pip install -r requirements.txt && pip install -r requirements-colab.txt
+# unbabel-comet pins numpy<2 / pandas / pytorch-lightning, so it is kept out of the local (Mac) environment.
+unbabel-comet>=2.2.2

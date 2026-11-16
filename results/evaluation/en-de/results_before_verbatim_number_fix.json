@@ -1,0 +1,262 @@
+{
+  "synthetic_test": {
+    "pair": "en-de",
+    "split": "test",
+    "n": 2024,
+    "detector": "gbm",
+    "tuned_on_test": false,
+    "skipped": {
+      "baseline_llm": "no LLM backend configured (ANTHROPIC_API_KEY)",
+      "span_llm": "no LLM backend configured (ANTHROPIC_API_KEY)",
+      "full": "no LLM backend configured (ANTHROPIC_API_KEY)"
+    },
+    "strategies": {
+      "raw": {
+        "errors": {
+          "n": 1012,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.899255664643037,
+          "chrf_after": 0.899255664643037,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0,
+          "flagged_any": 0.9061264822134387,
+          "restored_given_flagged": 0.0,
+          "flags_cleared": 0.0
+        },
+        "per_type": {
+          "ENTITY_NUMBER": {
+            "n": 212,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.9583902951414773,
+            "chrf_after": 0.9583902951414773,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.9481132075471698,
+            "flagged_correct_type": 0.9339622641509434,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "OMISSION": {
+            "n": 266,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.7604152497618205,
+            "chrf_after": 0.7604152497618205,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.7669172932330827,
+            "flagged_correct_type": 0.7443609022556391,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "MISTRANSLATION": {
+            "n": 267,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.9673893301676233,
+            "chrf_after": 0.9673893301676233,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.947565543071161,
+            "flagged_correct_type": 0.9250936329588015,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "HALLUCINATION": {
+            "n": 267,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.9224890728740095,
+            "chrf_after": 0.9224890728740095,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.9700374531835206,
+            "flagged_correct_type": 0.9700374531835206,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          }
+        },
+        "clean": {
+          "n": 1012,
+          "over_correction_rate": 0.0,
+          "false_alarm_rate": 0.07905138339920949,
+          "flagged_after": 0.07905138339920949
+        },
+        "status": {
+          "not_flagged": 2024
+        }
+      },
+      "constrained": {
+        "errors": {
+          "n": 1012,
+          "exact_restored": 0.14031620553359683,
+          "changed": 0.1600790513833992,
+          "chrf_before": 0.899255664643037,
+          "chrf_after": 0.9045153915714581,
+          "chrf_gain": 0.005259726928421138,
+          "improved": 0.15019762845849802,
+          "worsened": 0.007905138339920948,
+          "flagged_any": 0.9061264822134387,
+          "restored_given_flagged": 0.15485278080697928,
+          "flags_cleared": 0.15921483097055616
+        },
+        "per_type": {
+          "ENTITY_NUMBER": {
+            "n": 212,
+            "exact_restored": 0.6698113207547169,
+            "changed": 0.7547169811320755,
+            "chrf_before": 0.9583902951414773,
+            "chrf_after": 0.9841820569227044,
+            "chrf_gain": 0.025791761781227107,
+            "improved": 0.7169811320754716,
+            "worsened": 0.02830188679245283,
+            "flagged_any": 0.9481132075471698,
+            "flagged_correct_type": 0.9339622641509434,
+            "restored_given_flagged": 0.7064676616915423,
+            "flags_cleared": 0.7263681592039801
+          },
+          "OMISSION": {
+            "n": 266,
+            "exact_restored": 0.0,
+            "changed": 0.0037593984962406013,
+            "chrf_before": 0.7604152497618205,
+            "chrf_after": 0.7601352067096983,
+            "chrf_gain": -0.00028004305212225855,
+            "improved": 0.0,
+            "worsened": 0.0037593984962406013,
+            "flagged_any": 0.7669172932330827,
+            "flagged_correct_type": 0.7443609022556391,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "MISTRANSLATION": {
+            "n": 267,
+            "exact_restored": 0.0,
+            "changed": 0.003745318352059925,
+            "chrf_before": 0.9673893301676233,
+            "chrf_after": 0.9671252163316931,
+            "chrf_gain": -0.0002641138359301687,
+            "improved": 0.0,
+            "worsened": 0.003745318352059925,
+            "flagged_any": 0.947565543071161,
+            "flagged_correct_type": 0.9250936329588015,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "HALLUCINATION": {
+            "n": 267,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.9224890728740095,
+            "chrf_after": 0.9224890728740095,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.9700374531835206,
+            "flagged_correct_type": 0.9700374531835206,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          }
+        },
+        "clean": {
+          "n": 1012,
+          "over_correction_rate": 0.009881422924901186,
+          "false_alarm_rate": 0.07905138339920949,
+          "flagged_after": 0.07015810276679842
+        },
+        "status": {
+          "not_flagged": 1793,
+          "corrected": 172,
+          "unchanged_by_llm": 59
+        }
+      }
+    },
+    "detector_flagging": {
+      "recall_on_errors": 0.9061264822134387,
+      "false_alarm_on_clean": 0.07905138339920949,
+      "per_type_flag_rate": {
+        "OMISSION": 0.7443609022556391,
+        "MISTRANSLATION": 0.9250936329588015,
+        "ENTITY_NUMBER": 0.9339622641509434,
+        "HALLUCINATION": 0.9700374531835206
+      }
+    },
+    "baseline_b_labse_threshold": {
+      "threshold": 0.8961244678497314,
+      "recall_on_errors": 0.8942687747035574,
+      "false_alarm_on_clean": 0.6373517786561265,
+      "f1": 0.7064793130366901,
+      "note": "flagging only (it has no way to correct); COMET-QE not available, LaBSE cosine used instead"
+    }
+  },
+  "real_mt": {
+    "pair": "en-de",
+    "split": "devtest",
+    "n": 300,
+    "mt_backend": "nllb_ct2",
+    "strategy": "constrained",
+    "note": "FLORES devtest sources translated by NLLB-600M int8; no gold error labels, so chrF to the reference is a weak proxy",
+    "flag_rate": 0.15333333333333332,
+    "flag_rate_by_type": {
+      "OMISSION": 0.12666666666666668,
+      "MISTRANSLATION": 0.0033333333333333335,
+      "ENTITY_NUMBER": 0.023333333333333334,
+      "HALLUCINATION": 0.0
+    },
+    "edit_rate": 0.01,
+    "chrf_mt": 0.6170165425949847,
+    "chrf_corrected": 0.6165262782797042,
+    "chrf_gain_all": -0.0004902643152805419,
+    "edited_improved": 0.0,
+    "edited_worsened": 0.6666666666666666,
+    "edited_unchanged_chrf": 0.3333333333333333,
+    "flags_cleared_among_edited": 1.0,
+    "mean_chrf_flagged": 0.5067403894447827,
+    "mean_chrf_unflagged": 0.6369878144253363,
+    "edit_samples": [
+      {
+        "src": "The 802.11n standard operates on both the 2.4Ghz and 5.0Ghz frequencies.",
+        "ref": "Der 802.11n-Standard läuft auf den Frequenzen 2,4 Ghz sowie 5,0 Ghz.",
+        "mt": "Der 802.11n-Standard funktioniert sowohl auf den 2,4 GHz als auch auf den 5,0 GHz-Frequenzen.",
+        "corrected": "Der 802,11n-Standard funktioniert sowohl auf den 2,4 GHz als auch auf den 5,0 GHz-Frequenzen.",
+        "chrf_before": 0.5848081830328344,
+        "chrf_after": 0.5255145507945604,
+        "fixes": [],
+        "types": [
+          "ENTITY_NUMBER"
+        ]
+      },
+      {
+        "src": "This will allow it to be backwards compatible with 802.11a, 802.11b and 802.11g, provided that the base station has dual radios.",
+        "ref": "Dadurch kann er abwärtskompatibel mit 802.11a, 802.11b und 802.11g sein, vorausgesetzt, die Basisstation verfügt über Dual-Radio.",
+        "mt": "Dies ermöglicht es, mit 802.11a, 802.11b und 802.11g rückwärtskompatibel zu sein, vorausgesetzt, die Basisstation verfügt über doppelte Funkgeräte.",
+        "corrected": "Dies ermöglicht es, mit 802,11a, 802,11b und 802,11g rückwärtskompatibel zu sein, vorausgesetzt, die Basisstation verfügt über doppelte Funkgeräte.",
+        "chrf_before": 0.7255213190233678,
+        "chrf_after": 0.6377356566775007,
+        "fixes": [],
+        "types": [
+          "ENTITY_NUMBER"
+        ]
+      },
+      {
+        "src": "The Iraq Study Group presented its report at 12.00 GMT today.",
+        "ref": "Die Studiengruppe zum Irak stellte heute um 12:00 Uhr GMT ihren Bericht vor.",
+        "mt": "Die Irak-Studiegruppe hat heute um 12.00 Uhr GMT ihren Bericht vorgestellt.",
+        "corrected": "Die Irak-Studiegruppe hat heute um 12,00 Uhr GMT ihren Bericht vorgestellt.",
+        "chrf_before": 0.6543591746979697,
+        "chrf_after": 0.6543591746979697,
+        "fixes": [],
+        "types": [
+          "ENTITY_NUMBER"
+        ]
+      }
+    ]
+  }
+}

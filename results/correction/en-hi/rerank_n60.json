@@ -1,0 +1,36 @@
+{
+  "pair": "en-hi",
+  "n": 60,
+  "n_best": 4,
+  "mt_backend": "nllb_ct2",
+  "mean_distinct_candidates": 3.966666666666667,
+  "chrf_top1": 0.5916381685696488,
+  "chrf_reranked": 0.5840913620430184,
+  "chrf_oracle": 0.61451310924289,
+  "p_error_top1": 0.12878006856815138,
+  "p_error_reranked": 0.09739770345042234,
+  "margin_sweep": {
+    "0.0": {
+      "chrf": 0.5840913620430184,
+      "changed_top1": 0.7
+    },
+    "0.1": {
+      "chrf": 0.5911303543041488,
+      "changed_top1": 0.08333333333333333
+    },
+    "0.2": {
+      "chrf": 0.5907290085173862,
+      "changed_top1": 0.05
+    },
+    "0.3": {
+      "chrf": 0.5913221138469171,
+      "changed_top1": 0.03333333333333333
+    },
+    "0.5": {
+      "chrf": 0.5916381685696488,
+      "changed_top1": 0.0
+    }
+  },
+  "changed_top1": 0.7,
+  "note": "sources are validation sentences the detector saw (as synthetic pairs), not MT n-best lists"
+}

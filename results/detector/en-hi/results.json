@@ -1,0 +1,844 @@
+{
+  "pair": "en-hi",
+  "seed": 42,
+  "n_train_val": 1994,
+  "columns": [
+    "num_src",
+    "num_tgt",
+    "num_missing",
+    "num_extra",
+    "num_missing_frac",
+    "date_src",
+    "date_missing",
+    "date_extra",
+    "neg_src",
+    "neg_tgt",
+    "neg_diff",
+    "neg_parity_mismatch",
+    "ent_src",
+    "ent_missing",
+    "ent_missing_frac",
+    "lex_ent_src",
+    "lex_ent_missing",
+    "lex_ent_extra",
+    "lex_unit_src",
+    "lex_unit_missing",
+    "lex_unit_extra",
+    "labse_cos",
+    "align_n_src",
+    "align_n_tgt",
+    "align_len_ratio",
+    "align_src_unaligned_ratio",
+    "align_tgt_unaligned_ratio",
+    "align_src_max_run",
+    "align_tgt_max_run",
+    "align_src_max_run_frac",
+    "align_tgt_max_run_frac",
+    "nli_fwd_ent",
+    "nli_fwd_con",
+    "nli_bwd_ent",
+    "nli_bwd_con",
+    "bt_chrf",
+    "bt_len_ratio",
+    "len_src_words",
+    "len_hyp_words",
+    "len_word_ratio",
+    "len_char_ratio"
+  ],
+  "groups": [
+    "rules",
+    "lex",
+    "labse",
+    "align",
+    "roundtrip",
+    "surface"
+  ],
+  "models": {
+    "logreg": {
+      "params": {
+        "C": 0.03
+      },
+      "thresholds": {
+        "ANY": 0.39999999999999997,
+        "OMISSION": 0.825,
+        "MISTRANSLATION": 0.725,
+        "ENTITY_NUMBER": 0.7,
+        "HALLUCINATION": 0.575
+      },
+      "search": [
+        {
+          "params": {
+            "C": 0.03
+          },
+          "cv_macro_f1": 0.8555
+        },
+        {
+          "params": {
+            "C": 0.3
+          },
+          "cv_macro_f1": 0.8514
+        },
+        {
+          "params": {
+            "C": 3.0
+          },
+          "cv_macro_f1": 0.8494
+        }
+      ],
+      "cv_metrics": {
+        "per_class": {
+          "OK": {
+            "precision": 0.8789370078740157,
+            "recall": 0.8956870611835507,
+            "f1": 0.8872329855936413,
+            "mcc": 0.7724572324717653,
+            "support": 997
+          },
+          "OMISSION": {
+            "precision": 0.8263157894736842,
+            "recall": 0.5902255639097744,
+            "f1": 0.6885964912280702,
+            "mcc": 0.6613804182607823,
+            "support": 266
+          },
+          "MISTRANSLATION": {
+            "precision": 0.8896797153024911,
+            "recall": 0.9363295880149812,
+            "f1": 0.9124087591240876,
+            "mcc": 0.8988600626836672,
+            "support": 267
+          },
+          "ENTITY_NUMBER": {
+            "precision": 0.861244019138756,
+            "recall": 0.9137055837563451,
+            "f1": 0.8866995073891626,
+            "mcc": 0.8743434359249148,
+            "support": 197
+          },
+          "HALLUCINATION": {
+            "precision": 0.8557046979865772,
+            "recall": 0.9550561797752809,
+            "f1": 0.9026548672566371,
+            "mcc": 0.8884586931114996,
+            "support": 267
+          }
+        },
+        "any_error": {
+          "precision": 0.8936605316973415,
+          "recall": 0.876629889669007,
+          "f1": 0.8850632911392405,
+          "mcc": 0.7724572324717653,
+          "support": 997
+        },
+        "macro_f1": 0.8555185221183198,
+        "macro_f1_errors_only": 0.8475899062494894,
+        "accuracy": 0.870110330992979,
+        "mcc_multiclass": 0.8110307633888747,
+        "confusion": {
+          "labels": [
+            "OK",
+            "OMISSION",
+            "MISTRANSLATION",
+            "ENTITY_NUMBER",
+            "HALLUCINATION"
+          ],
+          "matrix": [
+            [
+              893,
+              30,
+              20,
+              18,
+              36
+            ],
+            [
+              90,
+              157,
+              8,
+              8,
+              3
+            ],
+            [
+              9,
+              2,
+              250,
+              2,
+              4
+            ],
+            [
+              16,
+              0,
+              1,
+              180,
+              0
+            ],
+            [
+              8,
+              1,
+              2,
+              1,
+              255
+            ]
+          ]
+        },
+        "n": 1994
+      },
+      "cv_macro_f1_ci95": [
+        0.8373458646291905,
+        0.8721558737137799
+      ]
+    },
+    "gbm": {
+      "params": {
+        "max_depth": 3,
+        "max_iter": 100
+      },
+      "thresholds": {
+        "ANY": 0.525,
+        "OMISSION": 0.85,
+        "MISTRANSLATION": 0.2,
+        "ENTITY_NUMBER": 0.675,
+        "HALLUCINATION": 0.39999999999999997
+      },
+      "search": [
+        {
+          "params": {
+            "max_depth": 3,
+            "max_iter": 100
+          },
+          "cv_macro_f1": 0.8502
+        },
+        {
+          "params": {
+            "max_depth": 3,
+            "max_iter": 250
+          },
+          "cv_macro_f1": 0.8463
+        },
+        {
+          "params": {
+            "max_depth": 5,
+            "max_iter": 100
+          },
+          "cv_macro_f1": 0.8446
+        },
+        {
+          "params": {
+            "max_depth": 5,
+            "max_iter": 250
+          },
+          "cv_macro_f1": 0.8441
+        }
+      ],
+      "cv_metrics": {
+        "per_class": {
+          "OK": {
+            "precision": 0.864423076923077,
+            "recall": 0.9017051153460381,
+            "f1": 0.8826705940108002,
+            "mcc": 0.7609889465331847,
+            "support": 997
+          },
+          "OMISSION": {
+            "precision": 0.864406779661017,
+            "recall": 0.575187969924812,
+            "f1": 0.690744920993228,
+            "mcc": 0.6710315218755029,
+            "support": 266
+          },
+          "MISTRANSLATION": {
+            "precision": 0.8561872909698997,
+            "recall": 0.9588014981273408,
+            "f1": 0.9045936395759717,
+            "mcc": 0.8908058192701424,
+            "support": 267
+          },
+          "ENTITY_NUMBER": {
+            "precision": 0.9065934065934066,
+            "recall": 0.8375634517766497,
+            "f1": 0.8707124010554089,
+            "mcc": 0.8579793691352446,
+            "support": 197
+          },
+          "HALLUCINATION": {
+            "precision": 0.8581081081081081,
+            "recall": 0.951310861423221,
+            "f1": 0.9023090586145648,
+            "mcc": 0.887897283650919,
+            "support": 267
+          }
+        },
+        "any_error": {
+          "precision": 0.8972746331236897,
+          "recall": 0.8585757271815446,
+          "f1": 0.8774987186058432,
+          "mcc": 0.7609889465331847,
+          "support": 997
+        },
+        "macro_f1": 0.8502061228499947,
+        "macro_f1_errors_only": 0.8420900050597935,
+        "accuracy": 0.866098294884654,
+        "mcc_multiclass": 0.804472747181537,
+        "confusion": {
+          "labels": [
+            "OK",
+            "OMISSION",
+            "MISTRANSLATION",
+            "ENTITY_NUMBER",
+            "HALLUCINATION"
+          ],
+          "matrix": [
+            [
+              899,
+              23,
+              29,
+              13,
+              33
+            ],
+            [
+              100,
+              153,
+              6,
+              4,
+              3
+            ],
+            [
+              8,
+              0,
+              256,
+              0,
+              3
+            ],
+            [
+              26,
+              1,
+              2,
+              165,
+              3
+            ],
+            [
+              7,
+              0,
+              6,
+              0,
+              254
+            ]
+          ]
+        },
+        "n": 1994
+      },
+      "cv_macro_f1_ci95": [
+        0.8322940337718233,
+        0.8695706573963814
+      ]
+    }
+  },
+  "best_kind": "logreg",
+  "baseline_labse_threshold": {
+    "feature": "labse_cos",
+    "threshold": 0.8686755776405335,
+    "any_f1": 0.7070622649394066
+  },
+  "ablation": [
+    {
+      "run": "all",
+      "n_features": 41,
+      "macro_f1": 0.8555185221183198,
+      "any_f1": 0.8850632911392405,
+      "f1_OMISSION": 0.6885964912280702,
+      "f1_MISTRANSLATION": 0.9124087591240876,
+      "f1_ENTITY_NUMBER": 0.8866995073891626,
+      "f1_HALLUCINATION": 0.9026548672566371
+    },
+    {
+      "run": "drop:rules",
+      "n_features": 26,
+      "macro_f1": 0.7014916442346089,
+      "any_f1": 0.8334167083541771,
+      "f1_OMISSION": 0.6933333333333334,
+      "f1_MISTRANSLATION": 0.6899841017488076,
+      "f1_ENTITY_NUMBER": 0.4057971014492754,
+      "f1_HALLUCINATION": 0.8857644991212654
+    },
+    {
+      "run": "drop:lex",
+      "n_features": 35,
+      "macro_f1": 0.8415368442644666,
+      "any_f1": 0.8679430535100638,
+      "f1_OMISSION": 0.7113594040968343,
+      "f1_MISTRANSLATION": 0.9177330895795247,
+      "f1_ENTITY_NUMBER": 0.8134715025906736,
+      "f1_HALLUCINATION": 0.9029982363315696
+    },
+    {
+      "run": "drop:labse",
+      "n_features": 40,
+      "macro_f1": 0.8535587242242888,
+      "any_f1": 0.8797953964194374,
+      "f1_OMISSION": 0.7019027484143763,
+      "f1_MISTRANSLATION": 0.9104477611940298,
+      "f1_ENTITY_NUMBER": 0.8833746898263027,
+      "f1_HALLUCINATION": 0.8876611418047882
+    },
+    {
+      "run": "drop:align",
+      "n_features": 32,
+      "macro_f1": 0.8529286812520475,
+      "any_f1": 0.875441250630358,
+      "f1_OMISSION": 0.7172131147540983,
+      "f1_MISTRANSLATION": 0.9172661870503597,
+      "f1_ENTITY_NUMBER": 0.8855721393034826,
+      "f1_HALLUCINATION": 0.8677839851024208
+    },
+    {
+      "run": "drop:roundtrip",
+      "n_features": 35,
+      "macro_f1": 0.8376726708046517,
+      "any_f1": 0.8756169792694966,
+      "f1_OMISSION": 0.6788617886178862,
+      "f1_MISTRANSLATION": 0.8836424957841484,
+      "f1_ENTITY_NUMBER": 0.8728179551122195,
+      "f1_HALLUCINATION": 0.8814814814814815
+    },
+    {
+      "run": "drop:surface",
+      "n_features": 37,
+      "macro_f1": 0.8541031151919253,
+      "any_f1": 0.8814070351758794,
+      "f1_OMISSION": 0.6989898989898989,
+      "f1_MISTRANSLATION": 0.9127272727272727,
+      "f1_ENTITY_NUMBER": 0.8855721393034826,
+      "f1_HALLUCINATION": 0.8913443830570903
+    },
+    {
+      "run": "only:rules",
+      "n_features": 15,
+      "macro_f1": 0.4929693985210917,
+      "any_f1": 0.6882621951219512,
+      "f1_OMISSION": 0.08092485549132948,
+      "f1_MISTRANSLATION": 0.8840336134453781,
+      "f1_ENTITY_NUMBER": 0.7921348314606742,
+      "f1_HALLUCINATION": 0.30746043707611154
+    },
+    {
+      "run": "only:lex",
+      "n_features": 6,
+      "macro_f1": 0.15009251866810688,
+      "any_f1": 0.6689513365318711,
+      "f1_OMISSION": 0.0,
+      "f1_MISTRANSLATION": 0.0,
+      "f1_ENTITY_NUMBER": 0.4,
+      "f1_HALLUCINATION": 0.25326633165829143
+    },
+    {
+      "run": "only:labse",
+      "n_features": 1,
+      "macro_f1": 0.13846352394420935,
+      "any_f1": 0.6666666666666666,
+      "f1_OMISSION": 0.36451612903225805,
+      "f1_MISTRANSLATION": 0.14254859611231102,
+      "f1_ENTITY_NUMBER": 0.18525289457647776,
+      "f1_HALLUCINATION": 0.0
+    },
+    {
+      "run": "only:align",
+      "n_features": 9,
+      "macro_f1": 0.3772709251511527,
+      "any_f1": 0.6644227532817233,
+      "f1_OMISSION": 0.5557986870897156,
+      "f1_MISTRANSLATION": 0.2775941837409121,
+      "f1_ENTITY_NUMBER": 0.20161290322580644,
+      "f1_HALLUCINATION": 0.8316831683168316
+    },
+    {
+      "run": "only:roundtrip",
+      "n_features": 6,
+      "macro_f1": 0.48928296908382674,
+      "any_f1": 0.7441077441077442,
+      "f1_OMISSION": 0.6160164271047228,
+      "f1_MISTRANSLATION": 0.02181818181818182,
+      "f1_ENTITY_NUMBER": 0.4053601340033501,
+      "f1_HALLUCINATION": 0.6099290780141844
+    }
+  ],
+  "spans_cv": {
+    "gated": {
+      "OMISSION": {
+        "tgt": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "gold_chars": 0,
+          "skipped_no_gold": 266
+        },
+        "src": {
+          "precision": 0.506115901343493,
+          "recall": 0.3975429201449047,
+          "f1": 0.44530698659139023,
+          "gold_chars": 6349,
+          "skipped_no_gold": 7
+        }
+      },
+      "MISTRANSLATION": {
+        "tgt": {
+          "precision": 0.8133086876155268,
+          "recall": 0.9734513274336283,
+          "f1": 0.8862034239677744,
+          "gold_chars": 904,
+          "skipped_no_gold": 41
+        },
+        "src": {
+          "precision": 0.8125,
+          "recall": 0.7358490566037735,
+          "f1": 0.7722772277227722,
+          "gold_chars": 159,
+          "skipped_no_gold": 230
+        }
+      },
+      "ENTITY_NUMBER": {
+        "tgt": {
+          "precision": 0.7959442332065906,
+          "recall": 0.9736434108527132,
+          "f1": 0.8758716875871688,
+          "gold_chars": 645,
+          "skipped_no_gold": 48
+        },
+        "src": {
+          "precision": 0.3597560975609756,
+          "recall": 0.5728155339805825,
+          "f1": 0.44194756554307113,
+          "gold_chars": 206,
+          "skipped_no_gold": 149
+        }
+      },
+      "HALLUCINATION": {
+        "tgt": {
+          "precision": 0.5183648633698418,
+          "recall": 0.8093099576820105,
+          "f1": 0.6319587281248946,
+          "gold_chars": 11579,
+          "skipped_no_gold": 0
+        },
+        "src": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "gold_chars": 0,
+          "skipped_no_gold": 267
+        }
+      }
+    },
+    "ungated": {
+      "OMISSION": {
+        "tgt": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "gold_chars": 0,
+          "skipped_no_gold": 266
+        },
+        "src": {
+          "precision": 0.18659313242728645,
+          "recall": 0.4476295479603087,
+          "f1": 0.2633920296570899,
+          "gold_chars": 6349,
+          "skipped_no_gold": 7
+        }
+      },
+      "MISTRANSLATION": {
+        "tgt": {
+          "precision": 0.7833622183708839,
+          "recall": 1.0,
+          "f1": 0.8785228377065112,
+          "gold_chars": 904,
+          "skipped_no_gold": 41
+        },
+        "src": {
+          "precision": 0.6139534883720931,
+          "recall": 0.8301886792452831,
+          "f1": 0.7058823529411764,
+          "gold_chars": 159,
+          "skipped_no_gold": 230
+        }
+      },
+      "ENTITY_NUMBER": {
+        "tgt": {
+          "precision": 0.6782334384858044,
+          "recall": 1.0,
+          "f1": 0.8082706766917294,
+          "gold_chars": 645,
+          "skipped_no_gold": 48
+        },
+        "src": {
+          "precision": 0.17278617710583152,
+          "recall": 0.7766990291262136,
+          "f1": 0.2826855123674911,
+          "gold_chars": 206,
+          "skipped_no_gold": 149
+        }
+      },
+      "HALLUCINATION": {
+        "tgt": {
+          "precision": 0.20749039692701665,
+          "recall": 0.8397098195008205,
+          "f1": 0.33275723403891233,
+          "gold_chars": 11579,
+          "skipped_no_gold": 0
+        },
+        "src": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "gold_chars": 0,
+          "skipped_no_gold": 267
+        }
+      }
+    },
+    "silver_examples": 355,
+    "silver_unmappable": 11
+  },
+  "test": {
+    "model": "logreg",
+    "metrics": {
+      "per_class": {
+        "OK": {
+          "precision": 0.8601190476190477,
+          "recall": 0.8567193675889329,
+          "f1": 0.8584158415841584,
+          "mcc": 0.717396908245014,
+          "support": 1012
+        },
+        "OMISSION": {
+          "precision": 0.7547169811320755,
+          "recall": 0.6083650190114068,
+          "f1": 0.6736842105263158,
+          "mcc": 0.6355742819604828,
+          "support": 263
+        },
+        "MISTRANSLATION": {
+          "precision": 0.8727272727272727,
+          "recall": 0.9090909090909091,
+          "f1": 0.8905380333951762,
+          "mcc": 0.8739744162228487,
+          "support": 264
+        },
+        "ENTITY_NUMBER": {
+          "precision": 0.8432203389830508,
+          "recall": 0.9004524886877828,
+          "f1": 0.8708971553610503,
+          "mcc": 0.8550724747637796,
+          "support": 221
+        },
+        "HALLUCINATION": {
+          "precision": 0.8293515358361775,
+          "recall": 0.9204545454545454,
+          "f1": 0.8725314183123878,
+          "mcc": 0.8538133436843149,
+          "support": 264
+        }
+      },
+      "any_error": {
+        "precision": 0.8572834645669292,
+        "recall": 0.8606719367588933,
+        "f1": 0.8589743589743589,
+        "mcc": 0.717396908245014,
+        "support": 1012
+      },
+      "macro_f1": 0.8332133318358178,
+      "macro_f1_errors_only": 0.8269127043987325,
+      "accuracy": 0.8443675889328063,
+      "mcc_multiclass": 0.774326534321344,
+      "confusion": {
+        "labels": [
+          "OK",
+          "OMISSION",
+          "MISTRANSLATION",
+          "ENTITY_NUMBER",
+          "HALLUCINATION"
+        ],
+        "matrix": [
+          [
+            867,
+            46,
+            29,
+            25,
+            45
+          ],
+          [
+            86,
+            160,
+            5,
+            10,
+            2
+          ],
+          [
+            18,
+            2,
+            240,
+            1,
+            3
+          ],
+          [
+            19,
+            3,
+            0,
+            199,
+            0
+          ],
+          [
+            18,
+            1,
+            1,
+            1,
+            243
+          ]
+        ]
+      },
+      "n": 2024
+    },
+    "macro_f1_ci95": [
+      0.8146429590877773,
+      0.8513103772284547
+    ],
+    "any_f1_ci95": [
+      0.8428705231471625,
+      0.8736003938860285
+    ],
+    "spans": {
+      "gated": {
+        "OMISSION": {
+          "tgt": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "gold_chars": 0,
+            "skipped_no_gold": 263
+          },
+          "src": {
+            "precision": 0.4619762027935851,
+            "recall": 0.4149628252788104,
+            "f1": 0.4372093023255814,
+            "gold_chars": 6456,
+            "skipped_no_gold": 9
+          }
+        },
+        "MISTRANSLATION": {
+          "tgt": {
+            "precision": 0.8,
+            "recall": 0.9501084598698482,
+            "f1": 0.8686167575607339,
+            "gold_chars": 922,
+            "skipped_no_gold": 35
+          },
+          "src": {
+            "precision": 0.6055045871559633,
+            "recall": 0.7252747252747253,
+            "f1": 0.66,
+            "gold_chars": 91,
+            "skipped_no_gold": 238
+          }
+        },
+        "ENTITY_NUMBER": {
+          "tgt": {
+            "precision": 0.8264947245017585,
+            "recall": 0.9337748344370861,
+            "f1": 0.8768656716417911,
+            "gold_chars": 755,
+            "skipped_no_gold": 53
+          },
+          "src": {
+            "precision": 0.3379174852652259,
+            "recall": 0.5276073619631901,
+            "f1": 0.41197604790419157,
+            "gold_chars": 326,
+            "skipped_no_gold": 168
+          }
+        },
+        "HALLUCINATION": {
+          "tgt": {
+            "precision": 0.5059414990859232,
+            "recall": 0.7704889507569167,
+            "f1": 0.6108007448789573,
+            "gold_chars": 11494,
+            "skipped_no_gold": 0
+          },
+          "src": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "gold_chars": 0,
+            "skipped_no_gold": 264
+          }
+        }
+      },
+      "ungated": {
+        "OMISSION": {
+          "tgt": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "gold_chars": 0,
+            "skipped_no_gold": 263
+          },
+          "src": {
+            "precision": 0.17653079655608406,
+            "recall": 0.4541511771995043,
+            "f1": 0.25423802297853887,
+            "gold_chars": 6456,
+            "skipped_no_gold": 9
+          }
+        },
+        "MISTRANSLATION": {
+          "tgt": {
+            "precision": 0.7539616346955796,
+            "recall": 0.9804772234273319,
+            "f1": 0.8524280999528525,
+            "gold_chars": 922,
+            "skipped_no_gold": 35
+          },
+          "src": {
+            "precision": 0.34579439252336447,
+            "recall": 0.8131868131868132,
+            "f1": 0.48524590163934433,
+            "gold_chars": 91,
+            "skipped_no_gold": 238
+          }
+        },
+        "ENTITY_NUMBER": {
+          "tgt": {
+            "precision": 0.6654898499558694,
+            "recall": 0.9986754966887417,
+            "f1": 0.798728813559322,
+            "gold_chars": 755,
+            "skipped_no_gold": 53
+          },
+          "src": {
+            "precision": 0.17412451361867703,
+            "recall": 0.549079754601227,
+            "f1": 0.26440177252584934,
+            "gold_chars": 326,
+            "skipped_no_gold": 168
+          }
+        },
+        "HALLUCINATION": {
+          "tgt": {
+            "precision": 0.19511125039172672,
+            "recall": 0.8125108752392552,
+            "f1": 0.3146616351353627,
+            "gold_chars": 11494,
+            "skipped_no_gold": 0
+          },
+          "src": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "gold_chars": 0,
+            "skipped_no_gold": 264
+          }
+        }
+      },
+      "silver_examples": 351,
+      "silver_unmappable": 18
+    },
+    "baseline_labse_any_f1": 0.6972176759410802
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "pair": "en-de",
+  "n": 120,
+  "split": "val",
+  "detector": "gbm",
+  "llm": null,
+  "strategies": {
+    "raw": {
+      "errors": {
+        "n": 60,
+        "exact_restored": 0.0,
+        "changed": 0.0,
+        "chrf_before": 0.9026620918750916,
+        "chrf_after": 0.9026620918750916,
+        "chrf_gain": 0.0,
+        "improved": 0.0,
+        "worsened": 0.0
+      },
+      "per_type": {
+        "HALLUCINATION": {
+          "n": 15,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.921954927274955,
+          "chrf_after": 0.921954927274955,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0
+        },
+        "ENTITY_NUMBER": {
+          "n": 15,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.9637358315732321,
+          "chrf_after": 0.9637358315732321,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0
+        },
+        "MISTRANSLATION": {
+          "n": 15,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.9650633807468444,
+          "chrf_after": 0.9650633807468444,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0
+        },
+        "OMISSION": {
+          "n": 15,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.7598942279053347,
+          "chrf_after": 0.7598942279053347,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0
+        }
+      },
+      "clean": {
+        "n": 60,
+        "over_correction_rate": 0.0
+      },
+      "status": {
+        "not_flagged": 120
+      },
+      "samples": []
+    },
+    "constrained": {
+      "errors": {
+        "n": 60,
+        "exact_restored": 0.18333333333333332,
+        "changed": 0.18333333333333332,
+        "chrf_before": 0.9026620918750916,
+        "chrf_after": 0.9089135240184619,
+        "chrf_gain": 0.006251432143370317,
+        "improved": 0.18333333333333332,
+        "worsened": 0.0
+      },
+      "per_type": {
+        "HALLUCINATION": {
+          "n": 15,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.921954927274955,
+          "chrf_after": 0.921954927274955,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0
+        },
+        "ENTITY_NUMBER": {
+          "n": 15,
+          "exact_restored": 0.7333333333333333,
+          "changed": 0.7333333333333333,
+          "chrf_before": 0.9637358315732321,
+          "chrf_after": 0.9887415601467132,
+          "chrf_gain": 0.025005728573481156,
+          "improved": 0.7333333333333333,
+          "worsened": 0.0
+        },
+        "MISTRANSLATION": {
+          "n": 15,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.9650633807468444,
+          "chrf_after": 0.9650633807468444,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0
+        },
+        "OMISSION": {
+          "n": 15,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.7598942279053347,
+          "chrf_after": 0.7598942279053347,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0
+        }
+      },
+      "clean": {
+        "n": 60,
+        "over_correction_rate": 0.0
+      },
+      "status": {
+        "not_flagged": 104,
+        "corrected": 11,
+        "unchanged_by_llm": 5
+      },
+      "samples": [
+        {
+          "id": "en-de-dev-0043-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Fred hat derzeit Winde mit einer Geschwindigkeit von 105 Meilen pro Stunde (165 km/h) und bewegt sich in Richtung Nordwesten.",
+          "before": "Fred hat derzeit Winde mit einer Geschwindigkeit von 105 Meilen pro Stunde (169 km/h) und bewegt sich in Richtung Nordwesten.",
+          "after": "Fred hat derzeit Winde mit einer Geschwindigkeit von 105 Meilen pro Stunde (165 km/h) und bewegt sich in Richtung Nordwesten.",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0109-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Die Kapsel wird sich mit etwa 12,8 km oder 8 Meilen pro Sekunde fortbewegen – schnell genug, um in einer Minute von San Francisco nach Los Angeles zu gelangen.",
+          "before": "Die Kapsel wird sich mit etwa 12,8 km oder 5 Meilen pro Sekunde fortbewegen – schnell genug, um in einer Minute von San Francisco nach Los Angeles zu gelangen.",
+          "after": "Die Kapsel wird sich mit etwa 12,8 km oder 8 Meilen pro Sekunde fortbewegen – schnell genug, um in einer Minute von San Francisco nach Los Angeles zu gelangen.",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0282-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Auch in Paris, Sofia in Bulgarien, Vilnius in Litauen, Valletta auf Malta, Tallinn in Estland und in Edinburgh und Glasgow in Schottland gab es Proteste.",
+          "before": "Auch in Zürich, Sofia in Bulgarien, Vilnius in Litauen, Valletta auf Malta, Tallinn in Estland und in Edinburgh und Glasgow in Schottland gab es Proteste.",
+          "after": "Auch in Paris, Sofia in Bulgarien, Vilnius in Litauen, Valletta auf Malta, Tallinn in Estland und in Edinburgh und Glasgow in Schottland gab es Proteste.",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0309-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Mindestens 100 Personen hatten an der Feier teilgenommen, um den ersten Hochzeitstag eines Paares zu feiern, dessen Hochzeit im vergangenen Jahr stattfand.",
+          "before": "Mindestens 102 Personen hatten an der Feier teilgenommen, um den ersten Hochzeitstag eines Paares zu feiern, dessen Hochzeit im vergangenen Jahr stattfand.",
+          "after": "Mindestens 100 Personen hatten an der Feier teilgenommen, um den ersten Hochzeitstag eines Paares zu feiern, dessen Hochzeit im vergangenen Jahr stattfand.",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0474-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Der Artemis-Tempel in Ephesus wurde am 21. Juli 356 v. Chr. in einem Akt der Brandstiftung durch Herostratus zerstört.",
+          "before": "Der Artemis-Tempel in Ephesus wurde am 21. Februar 356 v. Chr. in einem Akt der Brandstiftung durch Herostratus zerstört.",
+          "after": "Der Artemis-Tempel in Ephesus wurde am 21. Juli 356 v. Chr. in einem Akt der Brandstiftung durch Herostratus zerstört.",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0509-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "\"Es ist keine Lernbehinderung, es ist eine Lernschwäche; sie \"\"betrifft 3 bis 5 Prozent aller Kinder, vielleicht ganze 2 Millionen amerikanischer Kinder\"\".\"",
+          "before": "\"Es ist keine Lernbehinderung, es ist eine Lernschwäche; sie \"\"betrifft 3 bis 50 Prozent aller Kinder, vielleicht ganze 2 Millionen amerikanischer Kinder\"\".\"",
+          "after": "\"Es ist keine Lernbehinderung, es ist eine Lernschwäche; sie \"\"betrifft 3 bis 5 Prozent aller Kinder, vielleicht ganze 2 Millionen amerikanischer Kinder\"\".\"",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0540-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Zu den Truppen, die die vorgeschobenen Verteidigungsstellungen verstärkten, zählten das 1. und das 3. New-Hampshire-Regiment mit 200 Mann unter den Colonels John Stark und James Reed (die später beide Generäle wurden).",
+          "before": "Zu den Truppen, die die vorgeschobenen Verteidigungsstellungen verstärkten, zählten das 3. und das 3. New-Hampshire-Regiment mit 200 Mann unter den Colonels John Stark und James Reed (die später beide Generäle wurden).",
+          "after": "Zu den Truppen, die die vorgeschobenen Verteidigungsstellungen verstärkten, zählten das 1. und das 3. New-Hampshire-Regiment mit 200 Mann unter den Colonels John Stark und James Reed (die später beide Generäle wurden).",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0711-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Die Sehenswürdigkeiten und die Tierwelt der Galapagosinseln lassen sich am besten per Boot besichtigen, so wie Charles Darwin es 1835 tat.",
+          "before": "Die Sehenswürdigkeiten und die Tierwelt der Galapagosinseln lassen sich am besten per Boot besichtigen, so wie Charles Darwin es 1825 tat.",
+          "after": "Die Sehenswürdigkeiten und die Tierwelt der Galapagosinseln lassen sich am besten per Boot besichtigen, so wie Charles Darwin es 1835 tat.",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0740-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Es ist eine Inselgruppe mit 15 Inseln, die sich über 2,2 Millionen Quadratkilometer Ozeanfläche ausbreiten.",
+          "before": "Es ist eine Inselgruppe mit 10 Inseln, die sich über 2,2 Millionen Quadratkilometer Ozeanfläche ausbreiten.",
+          "after": "Es ist eine Inselgruppe mit 15 Inseln, die sich über 2,2 Millionen Quadratkilometer Ozeanfläche ausbreiten.",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0821-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Reiseagenturen gibt es seit dem 19. Jahrhundert. Ein Reiseberater ist in der Regel eine gute Wahl für Reisen, die über die bisherige Erfahrung des Reisenden hinsichtlich Natur, Kultur, Sprache oder einkommensschwacher Länder hinausgehen.",
+          "before": "Reiseagenturen gibt es seit dem 190. Jahrhundert. Ein Reiseberater ist in der Regel eine gute Wahl für Reisen, die über die bisherige Erfahrung des Reisenden hinsichtlich Natur, Kultur, Sprache oder einkommensschwacher Länder hinausgehen.",
+          "after": "Reiseagenturen gibt es seit dem 19. Jahrhundert. Ein Reiseberater ist in der Regel eine gute Wahl für Reisen, die über die bisherige Erfahrung des Reisenden hinsichtlich Natur, Kultur, Sprache oder einkommensschwacher Länder hinausgehen.",
+          "status": "corrected"
+        },
+        {
+          "id": "en-de-dev-0903-ENTITY_NUMBER",
+          "label": "ENTITY_NUMBER",
+          "ref": "Sie erzeugen starke Winde (oft 100-200 Meilen/Stunde) und können schwere Objekte in die Luft heben und herumwirbeln.",
+          "before": "Sie erzeugen starke Winde (oft 200-200 Meilen/Stunde) und können schwere Objekte in die Luft heben und herumwirbeln.",
+          "after": "Sie erzeugen starke Winde (oft 100-200 Meilen/Stunde) und können schwere Objekte in die Luft heben und herumwirbeln.",
+          "status": "corrected"
+        }
+      ]
+    }
+  },
+  "skipped": {},
+  "detector_on_sample": {
+    "recall_on_errors": 0.9833333333333333,
+    "false_alarm_rate_on_clean": 0.05,
+    "note": "optimistic: the detector was trained on train+val"
+  }
+}

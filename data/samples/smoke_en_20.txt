@@ -1,0 +1,23 @@
+# 20 hand-written English sentences for the Phase 1 smoke test.
+# They deliberately contain numbers, dates, named entities, negation and multi-clause structure
+# so the same file can be reused to eyeball the detectors in later phases.
+The train to Mumbai leaves at 6:45 in the morning.
+Prime Minister Narendra Modi visited Germany on 12 May 2022.
+She did not attend the meeting because she was ill.
+The company reported a profit of 4.5 million dollars in the third quarter.
+Water boils at 100 degrees Celsius at sea level.
+Dr. Anita Rao and her team discovered a new species of frog in Kerala.
+Please do not open the door until the train has stopped completely.
+The river Ganga flows for more than 2,500 kilometres before reaching the Bay of Bengal.
+My brother, who lives in Berlin, is visiting us next week.
+The museum is open every day except Monday, and tickets cost 200 rupees.
+He promised to return the book, but he never did.
+Thousands of people gathered in the square to celebrate the victory.
+The doctor said that the patient should take two tablets after each meal.
+Apple and Google announced a partnership with the University of Oxford.
+If it rains tomorrow, the match will be postponed to Sunday.
+The teacher gave the students a difficult test, and nobody finished on time.
+In 1947, India became independent from British rule.
+The new bridge, which is 1.2 kilometres long, connects the island to the mainland.
+I have never seen such a beautiful sunset in my entire life.
+The committee rejected the proposal because it would cost twice as much as expected.

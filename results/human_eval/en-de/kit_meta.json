@@ -1,0 +1,11 @@
+{
+  "n": 100,
+  "n_checks": 10,
+  "pool_n": 595,
+  "pool_flagged": 82,
+  "pool_unflagged": 513,
+  "sampled_flagged": 45,
+  "sampled_unflagged": 45,
+  "pool_flag_rate": 0.13781512605042018,
+  "seed": 42
+}

@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+.env
+
+# data: ignored except small samples
+data/raw/
+data/processed/
+data/synthetic/
+data/cache/
+!data/samples/
+!data/**/.gitkeep
+
+# run outputs (keep curated results/ tables+plots by removing the lines below if you want them tracked)
+results/runs/

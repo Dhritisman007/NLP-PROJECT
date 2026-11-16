@@ -1,0 +1,24 @@
+# Phase 1 dependencies (tested). Later phases append their packages here as they are added and tested.
+# Python 3.10+  (developed on 3.12).  Exact resolved versions: requirements.lock.txt
+ctranslate2                # int8 NLLB for low-memory back-translation (laptop profile)
+torch>=2.6                 # >=2.6 needed to load .bin checkpoints (NLLB ships pytorch_model.bin)
+transformers>=4.44,<5
+huggingface_hub>=0.24
+datasets>=2.19
+sentencepiece
+protobuf
+sacremoses
+numpy
+pyyaml
+typer>=0.12
+tqdm
+certifi                    # CA bundle for urllib downloads (python.org macOS builds have none)
+IndicTransToolkit          # pre/post-processing for IndicTrans2 (needs a C compiler to build)
+sentence-transformers>=3,<6   # LaBSE; <6 because 6.x requires transformers 5
+simalign                   # word alignment (mBERT embeddings)
+scipy
+gradio>=5,<6              # demo app (Phase 8); <6 keeps huggingface-hub<1.0 for transformers 4.x
+matplotlib                 # evaluation plots (Phase 6)
+scikit-learn
+anthropic                  # LLM backend for correction (Phase 5); key from ANTHROPIC_API_KEY
+pytest

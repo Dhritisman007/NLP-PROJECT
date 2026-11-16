@@ -1,0 +1,225 @@
+{
+  "synthetic_test": {
+    "pair": "en-hi",
+    "split": "test",
+    "n": 2024,
+    "detector": "logreg",
+    "tuned_on_test": false,
+    "skipped": {
+      "baseline_llm": "no LLM backend configured (ANTHROPIC_API_KEY)",
+      "span_llm": "no LLM backend configured (ANTHROPIC_API_KEY)",
+      "full": "no LLM backend configured (ANTHROPIC_API_KEY)"
+    },
+    "strategies": {
+      "raw": {
+        "errors": {
+          "n": 1012,
+          "exact_restored": 0.0,
+          "changed": 0.0,
+          "chrf_before": 0.9018133900883364,
+          "chrf_after": 0.9018133900883364,
+          "chrf_gain": 0.0,
+          "improved": 0.0,
+          "worsened": 0.0,
+          "flagged_any": 0.8606719367588933,
+          "restored_given_flagged": 0.0,
+          "flags_cleared": 0.0
+        },
+        "per_type": {
+          "ENTITY_NUMBER": {
+            "n": 221,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.9464164808322878,
+            "chrf_after": 0.9464164808322878,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.9140271493212669,
+            "flagged_correct_type": 0.9004524886877828,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "MISTRANSLATION": {
+            "n": 264,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.9627596139580171,
+            "chrf_after": 0.9627596139580171,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.9318181818181818,
+            "flagged_correct_type": 0.9204545454545454,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "HALLUCINATION": {
+            "n": 264,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.9265665668625717,
+            "chrf_after": 0.9265665668625717,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.9318181818181818,
+            "flagged_correct_type": 0.9204545454545454,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "OMISSION": {
+            "n": 263,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.7783079725050391,
+            "chrf_after": 0.7783079725050391,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.6730038022813688,
+            "flagged_correct_type": 0.6273764258555133,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          }
+        },
+        "clean": {
+          "n": 1012,
+          "over_correction_rate": 0.0,
+          "false_alarm_rate": 0.1432806324110672,
+          "flagged_after": 0.1432806324110672
+        },
+        "status": {
+          "not_flagged": 2024
+        }
+      },
+      "constrained": {
+        "errors": {
+          "n": 1012,
+          "exact_restored": 0.14130434782608695,
+          "changed": 0.15019762845849802,
+          "chrf_before": 0.9018133900883364,
+          "chrf_after": 0.9086009218783759,
+          "chrf_gain": 0.006787531790039547,
+          "improved": 0.14130434782608695,
+          "worsened": 0.008893280632411068,
+          "flagged_any": 0.8606719367588933,
+          "restored_given_flagged": 0.16417910447761194,
+          "flags_cleared": 0.15729047072330654
+        },
+        "per_type": {
+          "ENTITY_NUMBER": {
+            "n": 221,
+            "exact_restored": 0.6470588235294118,
+            "changed": 0.6742081447963801,
+            "chrf_before": 0.9464164808322878,
+            "chrf_after": 0.9780191329116468,
+            "chrf_gain": 0.03160265207935897,
+            "improved": 0.6470588235294118,
+            "worsened": 0.027149321266968326,
+            "flagged_any": 0.9140271493212669,
+            "flagged_correct_type": 0.9004524886877828,
+            "restored_given_flagged": 0.7079207920792079,
+            "flags_cleared": 0.6732673267326733
+          },
+          "MISTRANSLATION": {
+            "n": 264,
+            "exact_restored": 0.0,
+            "changed": 0.007575757575757576,
+            "chrf_before": 0.9627596139580171,
+            "chrf_after": 0.9623974774619392,
+            "chrf_gain": -0.0003621364960779694,
+            "improved": 0.0,
+            "worsened": 0.007575757575757576,
+            "flagged_any": 0.9318181818181818,
+            "flagged_correct_type": 0.9204545454545454,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "HALLUCINATION": {
+            "n": 264,
+            "exact_restored": 0.0,
+            "changed": 0.0,
+            "chrf_before": 0.9265665668625717,
+            "chrf_after": 0.9265665668625717,
+            "chrf_gain": 0.0,
+            "improved": 0.0,
+            "worsened": 0.0,
+            "flagged_any": 0.9318181818181818,
+            "flagged_correct_type": 0.9204545454545454,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.0
+          },
+          "OMISSION": {
+            "n": 263,
+            "exact_restored": 0.0,
+            "changed": 0.0038022813688212928,
+            "chrf_before": 0.7783079725050391,
+            "chrf_after": 0.7782334481588272,
+            "chrf_gain": -7.452434621191273e-05,
+            "improved": 0.0,
+            "worsened": 0.0038022813688212928,
+            "flagged_any": 0.6730038022813688,
+            "flagged_correct_type": 0.6273764258555133,
+            "restored_given_flagged": 0.0,
+            "flags_cleared": 0.005649717514124294
+          }
+        },
+        "clean": {
+          "n": 1012,
+          "over_correction_rate": 0.004940711462450593,
+          "false_alarm_rate": 0.1432806324110672,
+          "flagged_after": 0.13932806324110672
+        },
+        "status": {
+          "not_flagged": 1780,
+          "unchanged_by_llm": 87,
+          "corrected": 157
+        }
+      }
+    },
+    "detector_flagging": {
+      "recall_on_errors": 0.8606719367588933,
+      "false_alarm_on_clean": 0.1432806324110672,
+      "per_type_flag_rate": {
+        "OMISSION": 0.6273764258555133,
+        "MISTRANSLATION": 0.9204545454545454,
+        "ENTITY_NUMBER": 0.9004524886877828,
+        "HALLUCINATION": 0.9204545454545454
+      }
+    },
+    "baseline_b_labse_threshold": {
+      "threshold": 0.8686755776405335,
+      "recall_on_errors": 0.841897233201581,
+      "false_alarm_on_clean": 0.5731225296442688,
+      "f1": 0.6972176759410802,
+      "note": "flagging only (it has no way to correct); COMET-QE not available, LaBSE cosine used instead"
+    }
+  },
+  "real_mt": {
+    "pair": "en-hi",
+    "split": "devtest",
+    "n": 300,
+    "mt_backend": "nllb_ct2",
+    "strategy": "constrained",
+    "note": "FLORES devtest sources translated by NLLB-600M int8; no gold error labels, so chrF to the reference is a weak proxy",
+    "flag_rate": 0.09,
+    "flag_rate_by_type": {
+      "OMISSION": 0.03,
+      "MISTRANSLATION": 0.01,
+      "ENTITY_NUMBER": 0.03333333333333333,
+      "HALLUCINATION": 0.016666666666666666
+    },
+    "edit_rate": 0.0,
+    "chrf_mt": 0.5714631384887571,
+    "chrf_corrected": 0.5714631384887571,
+    "chrf_gain_all": 0.0,
+    "edited_improved": null,
+    "edited_worsened": null,
+    "edited_unchanged_chrf": null,
+    "flags_cleared_among_edited": null,
+    "mean_chrf_flagged": 0.5081152238792621,
+    "mean_chrf_unflagged": 0.5777283168567292,
+    "edit_samples": []
+  }
+}

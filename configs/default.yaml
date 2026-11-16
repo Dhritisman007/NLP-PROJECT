@@ -1,0 +1,113 @@
+# Default configuration. Override with:  mml <cmd> --pair en-de --profile colab_t4 --set mt.num_beams=4
+# Resolution order: this file -> chosen hardware profile -> --set overrides.
+
+seed: 42
+
+data:
+  flores_source: flores200   # flores200 (public tarball, no token) | flores_plus (HF, gated)
+
+run:
+  pair: en-hi            # key into `pairs`
+  profile: mac_dev       # key into `profiles` (mac_dev | colab_t4)
+  output_dir: results/runs
+
+paths:
+  data_dir: data
+  cache_dir: data/cache  # sqlite caches for MT / back-translation / QE outputs
+  hf_cache: null         # null -> default HF cache (~/.cache/huggingface). Disk is tight on the dev Mac.
+
+# ---- Language pairs. Codes are FLORES-200 codes (shared by NLLB, IndicTrans2, FLORES+). ----
+pairs:
+  en-hi:
+    src_lang: eng_Latn
+    tgt_lang: hin_Deva
+    mt_backend: indictrans2      # falls back to nllb if IndicTrans2 is unavailable (see README)
+    # FLORES+ language configs to download (reference translations)
+    flores_plus: [eng_Latn, hin_Deva]
+    halomi: false                # HalOmi has no Hindi
+    mqm: false                   # no WMT MQM for en-hi
+  en-de:
+    src_lang: eng_Latn
+    tgt_lang: deu_Latn
+    mt_backend: nllb
+    flores_plus: [eng_Latn, deu_Latn]
+    halomi: true                 # HalOmi covers deu_Latn <-> eng_Latn
+    mqm: true                    # WMT MQM en-de (with error spans)
+
+# ---- Hardware profiles. `mac_dev` = M1 8 GB laptop (dev + smoke tests); `colab_t4` = heavy runs. ----
+profiles:
+  mac_dev:
+    device: auto                 # cuda > mps > cpu
+    dtype: float32
+    mt_batch_size: 4
+    bt_backend: ct2              # back-translation: int8 CTranslate2 (an 8 GB laptop cannot hold fp32 NLLB comfortably)
+    llm_local_4bit: false
+    heavy_models: false          # XCOMET-XL / 7B LLM do not fit; modules skip with a warning
+  colab_t4:
+    device: cuda
+    dtype: float16
+    mt_batch_size: 16
+    bt_backend: hf               # back-translation: transformers NLLB (fp16 on the T4)
+    llm_local_4bit: true
+    heavy_models: true
+
+# ---- Machine translation ----
+mt:
+  num_beams: 5
+  n_best: 1                      # >1 returns N-best candidates (used by correct/rerank.py)
+  max_length: 256
+  backends:
+    indictrans2:
+      model_id: ai4bharat/indictrans2-en-indic-dist-200M   # gated (auto-approve): needs HF_TOKEN
+      revision: 2cfd0a20057756d756bf3e53528f492afc52f91a   # pinned: loaded with trust_remote_code
+      trust_remote_code: true
+    nllb:
+      model_id: facebook/nllb-200-distilled-600M           # open, CC-BY-NC-4.0
+      revision: f8d333a098d19b4fd9a8b18f94170487ad3f821d
+      trust_remote_code: false
+    nllb_ct2:                                              # same weights, int8 via CTranslate2: 0.6 GB, CPU-fast
+      model_id: facebook/nllb-200-distilled-600M           # (used for back-translation on the laptop profile)
+      revision: f8d333a098d19b4fd9a8b18f94170487ad3f821d
+      ct2_dir: data/cache/ct2/nllb-600m-int8               # create with: mml convert-ct2
+      quantization: int8
+
+# ---- Models for later phases (IDs verified on the HF API on 2026-11-09; see README) ----
+models:
+  qe_sentence: Unbabel/wmt22-cometkiwi-da        # gated (needs HF_TOKEN + accepted license)
+  qe_spans: Unbabel/XCOMET-XL                    # gated. NOTE: Unbabel/XCOMET-lite does NOT exist.
+  qe_spans_fallback: null                        # e.g. myyycroft/XCOMET-lite (community; en/de/es/ru/zh only) - unverified
+  similarity: sentence-transformers/LaBSE
+  nli: MoritzLaurer/mDeBERTa-v3-base-xnli-multilingual-nli-2mil7
+  aligner: simalign
+  ner:                                           # per target language (Davlan hrl does NOT cover Hindi)
+    hi: ai4bharat/IndicNER                       # gated (auto-approve), covers Hindi
+    de: Davlan/xlm-roberta-base-ner-hrl          # open; de/en/es/fr/it/nl/pt/ar/lv/zh
+
+# ---- Correction (Phase 5) ----
+llm:
+  backend: anthropic             # anthropic | openai | hf_local
+  anthropic:
+    api_key_env: ANTHROPIC_API_KEY       # ONLY this variable is used (ambient ANTHROPIC_AUTH_TOKEN / BASE_URL are ignored)
+    base_url: https://api.anthropic.com  # explicit on purpose: the SDK would otherwise inherit ANTHROPIC_BASE_URL
+    model: claude-opus-5-5
+    effort: medium                       # low | medium | high | xhigh | max (thinking is always on for this model)
+    max_tokens: 8000                     # thinking tokens count towards this
+    use_fallbacks: true                  # server-side refusal fallbacks (beta server-side-fallback-2026-07-01)
+  openai:                                # any OpenAI-compatible chat/completions endpoint (vLLM, Ollama, ...)
+    api_key_env: OPENAI_API_KEY
+    base_url: https://api.openai.com/v1
+    model: gpt-4o-mini
+    temperature: 0.0
+  hf_local:
+    model_id_colab: Qwen/Qwen2.5-7B-Instruct
+    model_id_cpu: Qwen/Qwen2.5-1.5B-Instruct
+    max_new_tokens: 256
+  # NOTE: claude-opus-5-5 rejects temperature/top_p/top_k, so runs are made reproducible by the on-disk LLM cache
+  # (data/cache/llm.sqlite), keyed by backend + model + exact prompt - not by sampling settings.
+
+correct:
+  max_edit_ratio: 0.6            # reject LLM edits that rewrite more than this fraction of the translation
+  min_detector_confidence: 0.0   # only correct sentences the detector flags (any threshold already applied)
+  rerank_n_best: 4               # candidates for n-best re-ranking
+  rerank_margin: 0.1             # keep the MT model's first choice unless the detector is >0.1 more confident (conservative;
+                                 # plain argmin re-ranking did not beat top-1 in the dev experiment, see README)
