@@ -481,3 +481,7 @@ The highlighted evidence is imperfect: for "The tiger's roar is not like the ful
 - Run the LLM baselines (c)/(d) and COMET evaluation (needs `ANTHROPIC_API_KEY` / `HF_TOKEN` + Colab).
 - A candidate ranker trained on real MT n-best lists (re-ranking by the current detector does not help, §9).
 - _More TBD._
+
+## 15. License
+
+The code is released under the [MIT License](LICENSE). The datasets and pretrained models it downloads (FLORES-200, NLLB, LaBSE, NLI models, etc.) keep their own licenses and terms of use.
