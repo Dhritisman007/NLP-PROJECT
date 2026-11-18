@@ -225,16 +225,20 @@ def build_app(get_pipeline: Callable[[str], CorrectionPipeline], pairs: list[str
 
     lock = threading.Lock()                                    # one translation/detection at a time (single shared model set)
 
+    def message_outputs(message: str) -> tuple:
+        """Empty panels plus a message in the status box (Gradio's ``gr.Error`` paints every panel with a bare red "Error")."""
+        return ([], [], [["", "", ""]], [["", "", "", ""]], [], [["", ""]], message)
+
     def run(text: str, pair: str, apply_correction: bool, own_translation: str = "") -> tuple:
         try:
             validate_request(text, own_translation)            # before get_pipeline(): invalid input must not trigger a model load
             with lock:
                 view = analyse(get_pipeline(pair), text, apply_correction, own_translation)
         except ValueError as exc:
-            raise gr.Error(str(exc)) from exc
+            return message_outputs(f"**Cannot run yet:** {exc}")
         except Exception as exc:  # noqa: BLE001 - show a readable error instead of a stack trace in the browser
             log.exception("demo request failed")
-            raise gr.Error(f"{type(exc).__name__}: {exc}") from exc
+            return message_outputs(f"**Something went wrong:** `{type(exc).__name__}: {exc}`")
         return (retitle(view.source_segments), retitle(view.mt_segments), probability_rows(view), view.findings or [["", "", "", "No problems detected."]],
                 view.corrected_segments, view.edits or [["", ""]], view.status)
 

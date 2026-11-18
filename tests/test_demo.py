@@ -130,8 +130,8 @@ def test_invalid_requests_are_rejected_before_any_model_is_loaded():
     app = build_app(get_pipeline, ["en-hi"], "en-hi")
     handler = next(f.fn for f in app.fns.values() if f.fn.__name__ == "run")
     for args in (("  ", "en-hi", True, ""), ("One. Two.", "en-hi", True, "mine")):
-        with pytest.raises(gr.Error):
-            handler(*args)
+        out = handler(*args)
+        assert len(out) == 7 and out[6].startswith("**Cannot run yet:**") and out[0] == [] and out[1] == []
     assert loaded == []
 
 
@@ -205,8 +205,7 @@ def test_app_builds_and_its_handler_returns_all_outputs_in_order():
     out = handler("Hello.", "en-de", True)
     assert len(out) == 7 and asked == ["en-de"] and out[2][0][0] in ("Omission", "Mistranslation", "Entity / number", "Hallucination", "Any error")
     assert "".join(p for p, _ in out[1]) == "T:Hello." and out[3] == [["", "", "", "No problems detected."]]
-    with pytest.raises(gr.Error):
-        handler("  ", "en-de", True)
+    assert "Please enter some English text." in handler("  ", "en-de", True)[6]
     assert set(TYPE_COLORS) == {"OMISSION", "MISTRANSLATION", "ENTITY_NUMBER", "HALLUCINATION"} and len(EXAMPLES) >= 3
 
 
