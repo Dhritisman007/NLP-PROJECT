@@ -1,0 +1,93 @@
+{
+  "pair": "en-de",
+  "kind": "gbm",
+  "n": 1994,
+  "uncertain_min": 0.2,
+  "reliability": {
+    "ANY": [
+      {
+        "zone": "below threshold",
+        "n": 995,
+        "real_error_rate": 0.09949748743718594
+      },
+      {
+        "zone": "at/above threshold",
+        "n": 999,
+        "real_error_rate": 0.8988988988988988
+      },
+      {
+        "zone": "just below threshold (within 0.3)",
+        "n": 240,
+        "real_error_rate": 0.2875
+      }
+    ],
+    "OMISSION": [
+      {
+        "zone": "below threshold",
+        "n": 1751,
+        "real_error_rate": 0.04054825813820674
+      },
+      {
+        "zone": "at/above threshold",
+        "n": 243,
+        "real_error_rate": 0.8148148148148148
+      },
+      {
+        "zone": "just below threshold (within 0.3)",
+        "n": 78,
+        "real_error_rate": 0.3333333333333333
+      }
+    ],
+    "MISTRANSLATION": [
+      {
+        "zone": "below threshold",
+        "n": 1735,
+        "real_error_rate": 0.0138328530259366
+      },
+      {
+        "zone": "at/above threshold",
+        "n": 259,
+        "real_error_rate": 0.9420849420849421
+      },
+      {
+        "zone": "just below threshold (within 0.3)",
+        "n": 21,
+        "real_error_rate": 0.2857142857142857
+      }
+    ],
+    "ENTITY_NUMBER": [
+      {
+        "zone": "below threshold",
+        "n": 1787,
+        "real_error_rate": 0.008393956351426972
+      },
+      {
+        "zone": "at/above threshold",
+        "n": 207,
+        "real_error_rate": 0.8502415458937198
+      },
+      {
+        "zone": "just below threshold (within 0.3)",
+        "n": 47,
+        "real_error_rate": 0.19148936170212766
+      }
+    ],
+    "HALLUCINATION": [
+      {
+        "zone": "below threshold",
+        "n": 1717,
+        "real_error_rate": 0.006988934187536401
+      },
+      {
+        "zone": "at/above threshold",
+        "n": 277,
+        "real_error_rate": 0.927797833935018
+      },
+      {
+        "zone": "just below threshold (within 0.3)",
+        "n": 16,
+        "real_error_rate": 0.3125
+      }
+    ]
+  }
+}

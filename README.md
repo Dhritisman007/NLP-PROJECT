@@ -475,6 +475,26 @@ The app runs on **localhost only**, with Gradio analytics and its version check 
 **Caveats shown in the app and true of the system.** The detector was trained on **synthetic** errors (false alarms ≈ 8-14% on correct sentences); without an LLM the corrector only fixes numbers, dates, units and known names; omissions/mistranslations/hallucinations are highlighted but not repaired.
 The highlighted evidence is imperfect: for "The tiger's roar is not like the full-voiced roar of a lion..." the detector flagged "of a lion" as missing although the Hindi contains it (the real omissions are elsewhere), consistent with the silver-span F1 of only 0.44 for omissions (§8). The demo splits input into sentences, which also avoids NLLB's tendency to drop content from multi-sentence inputs. For en-hi the translation is NLLB, because IndicTrans2 needs an HF token.
 
+### 12.1 Hinglish / mixed input, one output language, and honest confidence
+
+**Problem found by testing the demo.** Typing Hinglish ("Mera naam Rahul hai aur main kal Delhi jaa raha hoon") made NLLB copy the Romanised Hindi
+through, so the Hindi output mixed Latin and Devanagari, and the detector blamed an unrelated phrase ("kal tak" as an omission). Separately, the
+percentage next to a verdict was the raw score, so "Omission 71% - not flagged" was confusing.
+
+**Fixes** (`src/mml/langmix.py`, `normalize.py`, `detect/calibrate.py`; 31 new tests):
+* **Input language check.** Each sentence is classified as English, Hinglish (Romanised Hindi), Hindi in Devanagari, mixed script or unsupported.
+  Hinglish detection is a conservative word list (spelling is not standardised), so words that are also English ("do", "main", "log") only count as weak support.
+* **Conversion to English before translation.** An LLM does it if one is configured; otherwise the Hindi->English direction of the already loaded NLLB model is
+  used as a pivot, after known Romanised words are rewritten in Devanagari. The app always shows *"Input understood as: ..."*, because a wrong reading would otherwise give a fluent translation of the wrong sentence.
+* **One output language.** The dropdown is now "Output language"; after translation the output is checked for words of the other language (Latin words in a Hindi translation, Devanagari in German, copied source words). Problems appear as "Language mix" findings and a warning.
+* **Calibrated confidence and an "uncertain" verdict.** `mml calibrate --pair en-hi` fits isotonic maps from raw scores to the *observed rate of real errors* on out-of-fold train+val predictions (the test split is never touched; flagging thresholds and all reported metrics are unchanged).
+  Measured on those predictions: scores just below a type's threshold were real errors 20-35% of the time (e.g. omission, en-hi 27%, en-de 33%), versus 82-94% above it and 4-6% far below, so the verdict is now *flagged*, *uncertain* (not flagged, but >= 20% of comparable cases were real) or *clear*. Details: `results/detector/<pair>/calibration.json`.
+* **Stability.** `mml demo` now runs the small models on CPU by default, because the Apple GPU failed with "MPS out of memory" while another app (a local LLM server) held memory; override with `--set profiles.mac_dev.device=mps`.
+
+**Verified in the browser** on en-hi and en-de: the Hinglish input above is understood as English, and the output is entirely Devanagari Hindi / entirely German with no Latin copy-through; "She did not attend the meeting because she was ill." now shows "Omission 35% - uncertain" instead of "71% - no".
+
+**Limits.** The Hinglish word list is small (about 150 words) and spelling varies, so heavy or slangy Hinglish is converted approximately (the app says so) and may be misread; an LLM does this better. Calibration reflects the synthetic training distribution, so on real translations the percentages are an estimate, not a guarantee. The "uncertain" band uses a fixed 20% cut-off chosen by judgement, not tuned. Hinglish detection and the language check have only been exercised on a handful of hand-written sentences, not on a labelled Hinglish test set.
+
 ## 13. Limitations
 - No human-annotated meaning-loss data for English→Hindi (no MQM, no HalOmi); Hindi detector quality is measured on synthetic errors plus a small human-eval sample.
 - `XCOMET-lite` does not exist officially; span-level QE needs XCOMET-XL (GPU).

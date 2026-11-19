@@ -84,10 +84,10 @@ def test_view_shifts_span_offsets_across_sentences_and_reports_findings():
 def test_probability_table_never_headlines_an_unflagged_type_and_legend_names_every_type():
     below = build_view([result("a b c.", "x y z.", before=Detection({**{t: 0.1 for t in TARGETS}, "OMISSION": 0.38}, set(), []))], "constrained")
     rows = probability_rows(below)
-    assert rows[0] == ["Omission", "38%", "no"] and all(r[2] == "no" for r in rows)          # high-ish but below threshold: not "flagged"
+    assert rows[0] == ["Omission", "38%", "clear"] and all(r[2] == "clear" for r in rows)    # high-ish but below threshold: not "flagged"
     flagged = build_view([result("a b c.", "x y z.", before=det({"OMISSION"}, p=0.9))], "constrained")
     rows = {r[0]: r for r in probability_rows(flagged)}
-    assert rows["Omission"][2] == "yes" and rows["Any error"][2] == "yes" and rows["Hallucination"][2] == "no"
+    assert rows["Omission"][2] == "flagged" and rows["Any error"][2] == "flagged" and rows["Hallucination"][2] == "clear"
     html = legend_html()
     assert all(name in html for name in ("Omission", "Mistranslation", "Entity / number", "Hallucination", "edited word"))
 
@@ -180,6 +180,73 @@ def test_analyse_runs_the_pipeline_and_rejects_empty_input():
     with pytest.raises(ValueError):
         analyse(FakePipe(), "   ")
     assert len(analyse(FakePipe(), "x. " * 5000).per_sentence) <= MAX_SENTENCES              # input is capped
+
+
+# ------------------------------------------------------------------ uncertainty, Hinglish input, one-language output
+def test_uncertain_types_are_shown_as_uncertain_with_calibrated_percentages():
+    cal = {**{t: 0.02 for t in TARGETS}, "OMISSION": 0.30, "ANY": 0.31}
+    before = Detection({**{t: 0.1 for t in TARGETS}, "OMISSION": 0.71}, set(), [], cal, {"OMISSION"})
+    view = build_view([result("a b c.", "x y z.", before=before)], "constrained")
+    rows = {r[0]: r for r in probability_rows(view)}
+    assert view.calibrated and not view.flagged
+    assert rows["Omission"] == ["Omission", "30%", "uncertain"] and rows["Any error"][2] == "uncertain" and rows["Hallucination"][2] == "clear"
+    assert "uncertain" in view.status and "Nothing was flagged" in view.status and "No meaning-loss problems detected" not in view.status
+    assert any(f[0] == "Omission (uncertain)" and f[1] == "sentence" for f in view.findings)      # never "No problems detected" while uncertain
+    low_any = Detection({**{t: 0.1 for t in TARGETS}, "OMISSION": 0.71}, set(), [], {**cal, "ANY": 0.05}, {"OMISSION"})
+    probs = {r[0]: r for r in probability_rows(build_view([result("a.", "b.", before=low_any)], "constrained"))}
+    assert probs["Any error"][1] == "30%" and probs["Any error"][2] == "uncertain"                 # any error >= each of its types
+
+
+def test_flagged_types_show_the_observed_rate_not_the_raw_score():
+    cal = {**{t: 0.0 for t in TARGETS}, "ENTITY_NUMBER": 0.85, "ANY": 0.82}
+    before = Detection({**{t: 0.1 for t in TARGETS}, "ENTITY_NUMBER": 0.99, "ANY": 0.99}, {"ENTITY_NUMBER"}, [], cal, set())
+    rows = {r[0]: r for r in probability_rows(build_view([result("a 4.5.", "b 45.", before=before)], "constrained"))}
+    assert rows["Entity / number"] == ["Entity / number", "85%", "flagged"]
+
+
+def test_language_issues_are_reported_without_pretending_the_detector_flagged_something():
+    from mml.langmix import LangIssue
+
+    issues = [LangIssue("untranslated", "kal", "«kal» is Romanised Hindi left as it was typed.")]
+    view = build_view([result("a b c.", "x y z.")], "constrained", language_issues=issues)
+    assert not view.flagged and "Language check" in view.status and "«kal»" in view.status
+    assert ["Language mix", "translation", "kal", issues[0].why] in view.findings
+
+
+class _HinglishPipe:
+    """Fake pipeline: records what it is asked to translate; ``pivot`` converts Hindi to English like the real Hindi->English model."""
+
+    strategy = "constrained"
+    detector = type("D", (), {"skipped": {}})()
+    llm = None
+
+    def __init__(self, tgt_lang="hin_Deva"):
+        self.seen = []
+        self.cfg = type("C", (), {"pair": {"tgt_lang": tgt_lang}})()
+        self.pivot = type("P", (), {"translate_best": staticmethod(lambda xs: ["My name is Rahul and I am going to Delhi tomorrow."] * len(xs))})()
+
+    def run(self, sentences):
+        self.seen = list(sentences)
+        return [result(s, "मेरा नाम राहुल है और मैं कल दिल्ली जा रहा हूँ।") for s in sentences]
+
+
+def test_hinglish_input_is_converted_to_english_before_translation_and_explained():
+    pipe = _HinglishPipe()
+    view = analyse(pipe, "Mera naam Rahul hai aur main kal Delhi jaa raha hoon.")
+    assert pipe.seen == ["My name is Rahul and I am going to Delhi tomorrow."]        # the pipeline never sees Romanised Hindi
+    assert "Input understood as" in view.status and "Hinglish" in view.status and "Approximate" in view.status
+    assert not view.language_issues                                                   # clean Devanagari output
+
+
+def test_english_input_is_untouched_and_output_in_the_wrong_script_is_reported():
+    pipe = _HinglishPipe()
+    pipe.run = lambda sentences: [result(s, "Mera naam hai aur kal") for s in sentences]   # a copy-through the MT model might produce
+    view = analyse(pipe, "She did not attend the meeting because she was ill.")
+    assert "Input understood as" not in view.status                                     # English needs no conversion
+    assert view.language_issues and any(i.text.lower() == "mera" for i in view.language_issues)
+    german = _HinglishPipe("deu_Latn")
+    german.run = lambda sentences: [result(s, "Das ist कल gut") for s in sentences]
+    assert any(i.kind == "wrong_script" for i in analyse(german, "This is good.").language_issues)
 
 
 # ------------------------------------------------------------------ app construction (no server)

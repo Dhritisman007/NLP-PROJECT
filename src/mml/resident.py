@@ -70,6 +70,28 @@ def share_ct2(forward: Translator, cfg: Config) -> Translator | None:
     return Translator(rev, cache, requested_backend=rev.name)
 
 
+def build_pivot(forward: Translator, cfg: Config) -> Translator | None:
+    """Hindi (Devanagari, possibly code-mixed) -> English translator for normalising non-English input, whatever the chosen pair.
+
+    On the laptop profile it reuses the already loaded int8 NLLB model (no extra memory); otherwise it loads NLLB for ``hin_Deva -> eng_Latn``.
+    """
+    from transformers import AutoTokenizer
+
+    rev = build_backend(cfg, reverse=True)
+    rev.src_lang, rev.tgt_lang = "hin_Deva", "eng_Latn"
+    backend = forward.backend
+    if rev.name == "nllb_ct2":
+        if backend.name != "nllb_ct2" or not hasattr(backend, "translator"):
+            return None
+        rev.tokenizer = AutoTokenizer.from_pretrained(rev.model_id, src_lang=rev.src_lang, revision=rev.revision, token=get_hf_token())
+        rev.translator = backend.translator
+    else:
+        rev.load()
+    rev._loaded = True
+    cache = DiskCache(cfg.raw["paths"]["cache_dir"] + "/mt.sqlite")
+    return Translator(rev, cache, requested_backend=rev.name)
+
+
 def build_resident_pipeline(cfg: Config, strategy: str = "auto") -> CorrectionPipeline:
     """Detector + corrector + forward translator with every model kept in memory.
 
@@ -84,4 +106,5 @@ def build_resident_pipeline(cfg: Config, strategy: str = "auto") -> CorrectionPi
     pipe = CorrectionPipeline.from_config(cfg, strategy)
     pipe.detector = Detector(cfg, signal_runner=runner)
     pipe.translator = forward
+    pipe.pivot = build_pivot(forward, cfg)                    # Hindi -> English, used only for non-English input (see mml.normalize)
     return pipe

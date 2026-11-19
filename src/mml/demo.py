@@ -18,8 +18,11 @@ from typing import Any, Callable
 from mml.config import Config
 from mml.correct.span_postedit import describe_span, select_spans
 from mml.detect.base import SpanFlag
+from mml.detect.calibrate import UNCERTAIN_MIN
 from mml.detect.classifier import TYPE_NAMES
 from mml.detect.spans import kind_to_type
+from mml.langmix import LangIssue, output_issues, script_of
+from mml.normalize import Prepared, describe, llm_rewriter, prepare_sentences
 from mml.pipeline import CorrectionPipeline, PipelineResult
 
 log = logging.getLogger(__name__)
@@ -43,10 +46,13 @@ EXAMPLES = [
     "Prime Minister Narendra Modi visited Germany on 12 May 2022. Thousands of people gathered to celebrate.",
     "The new bridge, which is 1.2 kilometres long, connects the island to the mainland.",
 ]
+PAIR_NAMES = {"en-hi": "Hindi", "en-de": "German"}
 INTRO = """**Meaning-loss detection and correction for machine translation** (English → Hindi / German).
-Type English text. The app translates it, **highlights** where meaning may be lost (omission, mistranslation, entity/number, hallucination),
+Type English text (Hinglish or Hindi is converted to English first, and the output is always in the **output language** you choose).
+The app translates it, **highlights** where meaning may be lost (omission, mistranslation, entity/number, hallucination),
 and proposes a corrected translation. *Caveats:* the detector was trained on **synthetic** errors (it falsely flags ≈ 8–14% of correct
-sentences), and correction without an LLM only fixes numbers, dates, units and known names; other flagged errors are shown but not auto-fixed."""
+sentences), and correction without an LLM only fixes numbers, dates, units and known names; other flagged errors are shown but not auto-fixed.
+The percentage is the **observed chance that a case like this was a real error** (measured on training data), not the model's raw score."""
 
 
 # --------------------------------------------------------------------------- pure helpers
@@ -109,14 +115,21 @@ class DemoView:
     flagged: bool = False
     flagged_types: list[str] = field(default_factory=list)
     per_sentence: list[dict[str, Any]] = field(default_factory=list)
+    uncertain_types: list[str] = field(default_factory=list)       # not flagged, but a real error is plausible (see detect.calibrate)
+    calibrated: bool = False                                        # probabilities are observed error rates, not raw scores
+    language_issues: list[LangIssue] = field(default_factory=list)  # words of the wrong language in the translation
 
 
 def _typed_spans(res: PipelineResult, side: str) -> list[SpanFlag]:
     return [s for s in select_spans(res.before.spans_for(), res.src, res.mt) if s.side == side]
 
 
-def build_view(results: list[PipelineResult], strategy: str, skipped: dict[str, str] | None = None, applied: bool = True) -> DemoView:
-    """Combine per-sentence pipeline results into one source / translation / corrected view with shifted offsets."""
+def build_view(results: list[PipelineResult], strategy: str, skipped: dict[str, str] | None = None, applied: bool = True,
+               notes: list[str] | None = None, language_issues: list[LangIssue] | None = None) -> DemoView:
+    """Combine per-sentence pipeline results into one source / translation / corrected view with shifted offsets.
+
+    ``notes`` explain how non-English input was understood; ``language_issues`` list words of the wrong language in the output.
+    """
     src_text = mt_text = corr_text = ""
     src_spans: list[tuple[int, int, str]] = []
     mt_spans: list[tuple[int, int, str]] = []
@@ -136,22 +149,49 @@ def build_view(results: list[PipelineResult], strategy: str, skipped: dict[str, 
         for t in sorted(r.before.types):
             if not any(f[0] == TYPE_TITLES[t] for f in findings):          # a predicted type with no located span: still tell the user
                 findings.append([TYPE_TITLES[t], "sentence", "", "Flagged by the classifier; no specific span located."])
-        probs = {t: max(probs[t], r.before.probs.get(t, 0.0)) for t in TYPE_NAMES}
-        probs_any = max(probs_any, r.before.probs.get("ANY", 0.0))
+        shown = r.before.calibrated if r.before.calibrated is not None else r.before.probs     # observed error rate when calibrated
+        probs = {t: max(probs[t], shown.get(t, 0.0)) for t in TYPE_NAMES}
+        probs_any = max(probs_any, shown.get("ANY", 0.0))
+        for t in sorted(r.before.uncertain):                           # plausible but below the flagging threshold: listed, not highlighted
+            located = select_spans(r.before.spans_for({t}), r.src, r.mt)
+            for sp in located:
+                text = (r.src if sp.side == "src" else r.mt)[sp.start:sp.end]
+                findings.append([f"{TYPE_TITLES[t]} (uncertain)", "source" if sp.side == "src" else "translation", text,
+                                 "Below the flagging threshold, but similar cases were often real errors. Please check this span."])
+            if not located:
+                findings.append([f"{TYPE_TITLES[t]} (uncertain)", "sentence", "",
+                                 "Below the flagging threshold, but similar cases were often real errors; no specific words were located."])
         src_text += (" " if src_text else "") + r.src
         mt_text += (" " if mt_text else "") + r.mt
         corr_text += (" " if corr_text else "") + (r.corrected if applied else r.mt)
+    probs_any = max([probs_any, *probs.values()])                   # P(any error) is at least P(any single type)
     flagged = any(r.before.types for r in results)
     changed = corr_text != mt_text
-    status = [f"**Strategy:** `{strategy}`. " + ("LLM post-editing available." if strategy in ("full", "span_llm") else
-                                                "Rule-based fixing only (numbers, dates, units, known names); no LLM configured.")]
+    uncertain = sorted({t for r in results for t in r.before.uncertain})
+    issues = language_issues or []
+    for issue in issues:
+        findings.append(["Language mix", "translation", issue.text, issue.why])
+    status: list[str] = []
+    if notes:
+        status.append("**Input understood as:**\n" + "\n".join(f"- {n}" for n in notes))
+    status.append(f"**Strategy:** `{strategy}`. " + ("LLM post-editing available." if strategy in ("full", "span_llm") else
+                                                "Rule-based fixing only (numbers, dates, units, known names); no LLM configured."))
     if not flagged:
-        status.append("No meaning-loss problems detected (the detector can miss errors; it is not a guarantee).")
+        if uncertain:
+            status.append("Nothing was flagged, but **" + ", ".join(TYPE_TITLES[t] for t in uncertain) + "** is uncertain: a real error is "
+                          "plausible (see the findings table). Please check those words yourself.")
+        elif issues:
+            status.append("The detector flagged no meaning-loss problem, but the language check found problems (below).")
+        else:
+            status.append("No meaning-loss problems detected (the detector can miss errors; it is not a guarantee).")
     elif not changed:
         status.append("Problems were flagged but **no automatic fix applied**: this strategy cannot repair omissions, mistranslations "
                       "or hallucinations without an LLM. Review the highlighted spans.")
     else:
         status.append("A correction was applied; changed words are highlighted below.")
+    if issues:
+        status.append("**Language check:** the translation is not entirely in one language (" + ", ".join(f"«{i.text}»" for i in issues[:6]) +
+                      "). The output should be only in the language you chose.")
     after_flagged = any(r.after.types for r in results if r.changed)
     if changed:
         status.append("After the edit the detector " + ("**still flags** a problem." if after_flagged else "no longer flags the edited sentence(s)."))
@@ -162,7 +202,8 @@ def build_view(results: list[PipelineResult], strategy: str, skipped: dict[str, 
         diff_segments(mt_text, corr_text) if changed else [(corr_text, None)], corr_text,
         {**{t: probs[t] for t in TYPE_NAMES}, "any error": probs_any}, findings, edit_summary(mt_text, corr_text), "\n\n".join(status), flagged,
         sorted({t for r in results for t in r.before.types}),
-        [{"src": r.src, "mt": r.mt, "corrected": r.corrected, "types": sorted(r.before.types)} for r in results])
+        [{"src": r.src, "mt": r.mt, "corrected": r.corrected, "types": sorted(r.before.types)} for r in results],
+        uncertain, all(r.before.calibrated is not None for r in results) and bool(results), issues)
 
 
 TITLE_COLORS = {TYPE_TITLES[t]: c for t, c in TYPE_COLORS.items()}
@@ -174,12 +215,18 @@ def retitle(segments: list[tuple[str, str | None]]) -> list[tuple[str, str | Non
 
 
 def probability_rows(view: DemoView) -> list[list[str]]:
-    """Table rows ``[type, confidence, flagged?]`` (a plain table: a top-class headline would suggest an error even when
-    nothing crossed the flagging threshold)."""
+    """Table rows ``[type, chance of a real error, verdict]``: flagged / uncertain / clear.
+
+    With calibration the percentage is the observed rate of real errors among comparable training cases, so a value just below the
+    flagging threshold is shown honestly (e.g. "30%, uncertain") instead of as a misleading "71%, no".
+    """
     rows = []
     for name, p in sorted(view.probabilities.items(), key=lambda kv: -kv[1]):
-        flagged = view.flagged if name == "any error" else name in view.flagged_types
-        rows.append([TYPE_TITLES.get(name, name), f"{p:.0%}", "yes" if flagged else "no"])
+        if name == "any error":
+            verdict = "flagged" if view.flagged else ("uncertain" if view.uncertain_types or (view.calibrated and p >= UNCERTAIN_MIN) else "clear")
+        else:
+            verdict = "flagged" if name in view.flagged_types else ("uncertain" if name in view.uncertain_types else "clear")
+        rows.append([TYPE_TITLES.get(name, name), f"{p:.0%}", verdict])
     return rows
 
 
@@ -204,18 +251,39 @@ def validate_request(text: str, own_translation: str = "") -> list[str]:
     return sentences
 
 
+def _pivot_of(pipeline: Any) -> Callable[[list[str]], list[str]] | None:
+    pivot = getattr(pipeline, "pivot", None)
+    return pivot.translate_best if pivot is not None else None
+
+
+def _llm_of(pipeline: Any) -> Callable[[str], str] | None:
+    llm = getattr(pipeline, "llm", None)
+    return llm_rewriter(llm) if llm is not None else None
+
+
 def analyse(pipeline: CorrectionPipeline, text: str, apply_correction: bool = True, own_translation: str = "") -> DemoView:
     """Run the pipeline on user text (≤ ``MAX_SENTENCES`` sentences) and build the view.
 
+    Non-English input (Hinglish, Hindi, a mix) is first converted to English (:mod:`mml.normalize`) so the output is always in the one
+    language the user chose, and the translation is then checked for words of any other language.
     With ``own_translation`` (one source sentence only) the MT step is skipped and the given translation is checked and corrected;
     this makes it possible to try the detector/corrector on a deliberately wrong translation.
     """
     sentences = validate_request(text, own_translation)
+    prepared: list[Prepared] = prepare_sentences(sentences, _pivot_of(pipeline), _llm_of(pipeline))
+    english = [p.english for p in prepared]
+    notes = [d for d in (describe(p) for p in prepared) if d]
     if own_translation and own_translation.strip():
-        results = pipeline.run_pairs([(sentences[0], own_translation.strip()[:MAX_CHARS])])
+        results = pipeline.run_pairs([(english[0], own_translation.strip()[:MAX_CHARS])])
     else:
-        results = pipeline.run(sentences)
-    return build_view(results, pipeline.strategy, pipeline.detector.skipped, apply_correction)
+        results = pipeline.run(english)
+    issues: list[LangIssue] = []
+    cfg = getattr(pipeline, "cfg", None)
+    if cfg is not None:
+        script = script_of(cfg.pair["tgt_lang"])
+        for r in results:
+            issues += output_issues(r.src, r.corrected if apply_correction else r.mt, script)
+    return build_view(results, pipeline.strategy, pipeline.detector.skipped, apply_correction, notes, issues)
 
 
 # --------------------------------------------------------------------------- Gradio layout
@@ -247,10 +315,11 @@ def build_app(get_pipeline: Callable[[str], CorrectionPipeline], pairs: list[str
     with gr.Blocks(title="MT meaning-loss detector and corrector", css=css) as demo:
         gr.Markdown(INTRO)
         with gr.Row():
-            text = gr.Textbox(label="English source text", lines=4, placeholder="Type or paste English text (up to 8 short sentences)",
-                              scale=4)
+            text = gr.Textbox(label="Text to translate (English; Hinglish or Hindi is converted to English first)", lines=4,
+                              placeholder="Type or paste English text (up to 8 short sentences)", scale=4)
             with gr.Column(scale=1):
-                pair = gr.Dropdown(choices=pairs, value=default_pair, label="Language pair")
+                pair = gr.Dropdown(choices=[(f"{PAIR_NAMES.get(p, p)} ({p})", p) for p in pairs], value=default_pair,
+                                   label="Output language (the translation is always in this language)")
                 apply = gr.Checkbox(value=True, label="Apply correction")
                 go = gr.Button("Translate and check", variant="primary")
         own = gr.Textbox(label="Optional: paste your own translation to check instead of machine-translating (one source sentence only)",
@@ -261,7 +330,7 @@ def build_app(get_pipeline: Callable[[str], CorrectionPipeline], pairs: list[str
             src_hl = gr.HighlightedText(label="Source: evidence of missing content", color_map=TITLE_COLORS, show_legend=False, combine_adjacent=False)
             mt_hl = gr.HighlightedText(label="Machine translation: suspicious spans", color_map=TITLE_COLORS, show_legend=False, combine_adjacent=False)
         with gr.Row():
-            probs = gr.Dataframe(headers=["error type", "confidence (max over sentences)", "flagged"], label="Detector", interactive=False, wrap=True, column_widths=["34%", "40%", "26%"])
+            probs = gr.Dataframe(headers=["error type", "chance of a real error", "verdict"], label="Detector (verdict: flagged / uncertain / clear)", interactive=False, wrap=True, column_widths=["34%", "36%", "30%"])
             status = gr.Markdown()
         findings = gr.Dataframe(headers=["type", "where", "text", "why it was flagged"], label="Findings", wrap=True, interactive=False,
                                 column_widths=["17%", "13%", "14%", "56%"])

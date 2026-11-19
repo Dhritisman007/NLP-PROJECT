@@ -17,6 +17,7 @@ import numpy as np
 
 from mml.config import Config
 from mml.detect.base import SignalResult, SpanFlag
+from mml.detect.calibrate import UNCERTAIN_MIN, Calibrator, load_calibrator
 from mml.detect.classifier import TARGETS, TYPE_NAMES, MeaningLossClassifier
 from mml.detect.features import build_table
 from mml.detect.run import DEFAULT_SIGNALS, run_signals
@@ -34,6 +35,8 @@ class Detection:
     probs: dict[str, float]
     types: set[str]
     spans: list[SpanFlag] = field(default_factory=list)
+    calibrated: dict[str, float] | None = None    # observed real-error rate for this score (None when no calibration file exists)
+    uncertain: set[str] = field(default_factory=set)   # not flagged, but >= UNCERTAIN_MIN of comparable training cases were real errors
 
     @property
     def any_error(self) -> bool:
@@ -50,15 +53,18 @@ class Detector:
 
     def __init__(self, cfg: Config, kind: str | None = None, model_dir: str | Path | None = None,
                  signal_runner: SignalRunner = run_signals, model: MeaningLossClassifier | None = None,
-                 columns: list[str] | None = None) -> None:
+                 columns: list[str] | None = None, calibrate: bool = True) -> None:
         self.cfg = cfg
         self._runner = signal_runner
         root = Path(cfg.raw["paths"]["data_dir"]).parent
+        from_disk = model is None                       # an explicitly passed model (tests) must not pick up a calibration file by accident
         if model is None:
             kind = kind or self._best_kind(root, cfg.pair_key)
             blob = joblib.load(Path(model_dir or root / "models" / cfg.pair_key) / f"detector_{kind}.joblib")
             model, columns = blob["model"], blob["columns"]
         self.kind = kind or model.kind
+        self.calibrator: Calibrator | None = (load_calibrator(Path(model_dir or root / "models" / cfg.pair_key))
+                                              if calibrate and (from_disk or model_dir is not None) else None)
         self.model: MeaningLossClassifier = model
         self.columns: list[str] = columns or model.columns
         self.skipped: dict[str, str] = {}
@@ -83,7 +89,10 @@ class Detector:
         out = []
         for i, p in enumerate(P):
             types = {t for j, t in enumerate(TYPE_NAMES) if p[j + 1] >= self.model.thresholds[t]}
-            out.append(Detection({t: float(p[j]) for j, t in enumerate(TARGETS)}, types, table.spans[i]))
+            raw = {t: float(p[j]) for j, t in enumerate(TARGETS)}
+            cal = self.calibrator(raw) if self.calibrator is not None else None
+            uncertain = {t for t in TYPE_NAMES if cal and t not in types and cal[t] >= UNCERTAIN_MIN}
+            out.append(Detection(raw, types, table.spans[i], cal, uncertain))
         return out
 
     def error_probability(self, pairs: list[tuple[str, str]]) -> np.ndarray:

@@ -203,6 +203,15 @@ def features(
                          "groups": table.groups(), "signals_skipped": skipped})
 
 
+@app.command("calibrate")
+def calibrate_cmd(config: ConfigOpt = None, pair: PairOpt = None, profile: ProfileOpt = None, set_: SetOpt = None) -> None:
+    """Fit score calibration for the trained detector (out-of-fold train+val only; the test split is not touched)."""
+    from mml.detect.calibrate import fit_calibration
+
+    cfg = _load(config, pair, profile, set_)
+    typer.echo(str(fit_calibration(cfg)))
+
+
 @app.command("train-detector")
 def train_detector_cmd(
     kinds: Annotated[str, typer.Option(help="logreg,gbm")] = "logreg,gbm",
@@ -318,6 +327,11 @@ def demo(
     from mml.demo import launch
 
     cfg = _load(config, pair, profile, set_)
+    prof = cfg.raw["profiles"][cfg.raw["run"]["profile"]]
+    if prof.get("device") in ("auto", "mps"):
+        # The demo handles a few sentences at a time on small models; CPU is fast enough and, unlike the Apple GPU, does not fail with
+        # "MPS out of memory" when other apps (e.g. a local LLM server) hold memory. Override with --set profiles.mac_dev.device=mps.
+        prof["device"] = "cpu"
     launch(cfg, list(cfg.raw["pairs"]), cfg.pair_key, port, share, strategy)
 
 
